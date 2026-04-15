@@ -1,0 +1,15 @@
+# Backend
+backend/target/
+backend/.mvn/
+*.class
+*.jar
+
+# Frontend
+frontend/frontend/node_modules/
+frontend/frontend/dist/
+frontend/frontend/.angular/
+
+# IDE
+.idea/
+.vscode/
+*.iml
