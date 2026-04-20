@@ -1,0 +1,146 @@
+<div class="min-h-screen bg-zinc-950 text-white">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <span class="text-2xl font-black tracking-tight">
+        Dalas<span class="text-red-500">Cars</span>
+      </span>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#" class="text-zinc-400 hover:text-white text-sm font-medium transition">Annonces</a>
+        <a href="#" class="text-zinc-400 hover:text-white text-sm font-medium transition">Comment ça marche</a>
+        <a href="#" class="text-zinc-400 hover:text-white text-sm font-medium transition">Contact</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button (click)="logout()" class="text-zinc-400 hover:text-white text-sm font-medium transition px-4 py-2">
+          Déconnexion
+        </button>
+        <button class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2 rounded-xl transition">
+          Vendre ma voiture
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center overflow-hidden">
+    <img
+      src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1800&q=80"
+      alt="hero car"
+      class="absolute inset-0 w-full h-full object-cover opacity-30"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-zinc-950/50 via-zinc-950/60 to-zinc-950"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 pt-24">
+      <div class="max-w-3xl">
+        <span class="inline-block bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+          🇧🇪 La référence à Bruxelles
+        </span>
+        <h1 class="text-6xl lg:text-7xl font-black leading-tight tracking-tight mb-6">
+          Vendez votre<br/>
+          voiture<br/>
+          <span class="text-red-500">en 3 clics.</span>
+        </h1>
+        <p class="text-zinc-400 text-xl mb-10 max-w-xl leading-relaxed">
+          DalasCars simplifie la vente de voiture en Belgique. Publiez votre annonce en moins de 2 minutes et trouvez un acheteur rapidement.
+        </p>
+
+        <!-- Search bar -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-2 flex flex-col md:flex-row gap-2 max-w-2xl">
+          <select class="flex-1 bg-transparent text-white px-4 py-3 focus:outline-none text-sm">
+            <option value="" class="bg-zinc-900">Toutes les marques</option>
+            <option class="bg-zinc-900">BMW</option>
+            <option class="bg-zinc-900">Mercedes</option>
+            <option class="bg-zinc-900">Audi</option>
+            <option class="bg-zinc-900">Toyota</option>
+            <option class="bg-zinc-900">Volkswagen</option>
+          </select>
+          <div class="w-px bg-zinc-800 hidden md:block"></div>
+          <select class="flex-1 bg-transparent text-white px-4 py-3 focus:outline-none text-sm">
+            <option value="" class="bg-zinc-900">Budget max</option>
+            <option class="bg-zinc-900">5 000 €</option>
+            <option class="bg-zinc-900">10 000 €</option>
+            <option class="bg-zinc-900">20 000 €</option>
+            <option class="bg-zinc-900">50 000 €</option>
+          </select>
+          <button class="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-xl transition text-sm">
+            Rechercher
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="bg-zinc-900/50 border-y border-zinc-800 py-12">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <p class="text-4xl font-black text-white">2 min</p>
+        <p class="text-zinc-500 text-sm mt-1">pour publier une annonce</p>
+      </div>
+      <div>
+        <p class="text-4xl font-black text-red-500">100%</p>
+        <p class="text-zinc-500 text-sm mt-1">gratuit pour les vendeurs</p>
+      </div>
+      <div>
+        <p class="text-4xl font-black text-white">3</p>
+        <p class="text-zinc-500 text-sm mt-1">étapes pour vendre</p>
+      </div>
+      <div>
+        <p class="text-4xl font-black text-white">🇧🇪</p>
+        <p class="text-zinc-500 text-sm mt-1">100% Belgique</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section class="py-24 max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-black text-white mb-4">Comment ça marche ?</h2>
+      <p class="text-zinc-500 text-lg">Vendre n'a jamais été aussi simple</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 hover:border-red-500/50 transition group">
+        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-xl font-black mb-6 group-hover:scale-110 transition">
+          1
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Publiez votre annonce</h3>
+        <p class="text-zinc-500 leading-relaxed">
+          Ajoutez les infos de votre voiture et quelques photos. Ça prend moins de 2 minutes.
+        </p>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 hover:border-red-500/50 transition group">
+        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-xl font-black mb-6 group-hover:scale-110 transition">
+          2
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Recevez des messages</h3>
+        <p class="text-zinc-500 leading-relaxed">
+          Les acheteurs intéressés vous contactent directement via notre messagerie intégrée.
+        </p>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 hover:border-red-500/50 transition group">
+        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-xl font-black mb-6 group-hover:scale-110 transition">
+          3
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3">Concluez la vente</h3>
+        <p class="text-zinc-500 leading-relaxed">
+          Rencontrez l'acheteur, finalisez la transaction et marquez votre annonce comme vendue.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-zinc-800 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <span class="text-xl font-black">Dalas<span class="text-red-500">Cars</span></span>
+      <p class="text-zinc-600 text-sm">© 2026 DalasCars. Tous droits réservés. — Bruxelles, Belgique</p>
+    </div>
+  </footer>
+
+</div>
