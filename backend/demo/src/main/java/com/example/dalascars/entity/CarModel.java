@@ -2,7 +2,6 @@ package com.example.dalascars.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
 
 @Entity
 @Table(name = "car_models")
@@ -23,7 +22,4 @@ public class CarModel {
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
-
-    @OneToMany(mappedBy = "carModel", cascade = CascadeType.ALL)
-    private List<Car> cars;
 }

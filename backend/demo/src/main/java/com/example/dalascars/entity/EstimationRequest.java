@@ -2,31 +2,32 @@ package com.example.dalascars.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.awt.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "cars")
+@Table(name = "estimation_requests")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Car {
+public class EstimationRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "car_model_id", nullable = false)
-    private CarModel carModel;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User seller;
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
+
+    @ManyToOne
+    @JoinColumn(name = "car_model_id", nullable = false)
+    private CarModel carModel;
 
     @Column(nullable = false)
     private int year;
@@ -34,26 +35,34 @@ public class Car {
     @Column(nullable = false)
     private int mileage;
 
-    @Column(nullable = false)
-    private double price;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FuelType fuelType;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Transmission transmission;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CarCondition condition;
 
     @Column(length = 2000)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String city;
+    private Intention intention;
 
     @Enumerated(EnumType.STRING)
-    private CarStatus status;
+    @Column(nullable = false)
+    private RequestStatus status;
 
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-    private List<Image> images;
+    // Mis par l'admin
+    private Double estimatedPrice;
+
+    // Mis par l'admin si intention = SELL
+    private Double offerPrice;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -61,5 +70,6 @@ public class Car {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.status = RequestStatus.EN_ATTENTE;
     }
 }
