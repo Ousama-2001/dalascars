@@ -1,0 +1,227 @@
+<div class="min-h-screen text-white" style="background: #080808;">
+
+  <!-- BG -->
+  <div class="fixed inset-0 pointer-events-none" style="z-index: 0;">
+    <div style="position:absolute; inset:0; background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(212,175,55,0.05) 0%, transparent 60%);"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50" style="background: rgba(8,8,8,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212,175,55,0.1);">
+    <div class="max-w-7xl mx-auto px-8 py-5 flex items-center justify-between">
+      <span class="text-xl font-black">
+        Dalas<span style="color: #D4AF37;">Cars</span>
+        <span class="ml-3 text-xs font-bold px-2 py-1 rounded" style="background: rgba(212,175,55,0.1); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2);">ADMIN</span>
+      </span>
+      <a routerLink="/home" class="text-sm font-medium" style="color: rgba(255,255,255,0.35);">← Retour au site</a>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-8 pt-32 pb-20" style="position: relative; z-index: 1;">
+
+    <!-- Titre -->
+    <div class="mb-10">
+      <div class="mb-3 text-xs font-bold tracking-widest uppercase" style="color: #D4AF37; letter-spacing: 3px;">— Dashboard</div>
+      <h1 class="font-black mb-2" style="font-size: 40px; letter-spacing: -2px;">Gestion des demandes</h1>
+      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Gérez les estimations et offres d'achat.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="rounded-2xl p-6" style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);">
+        <div class="text-3xl font-black mb-1" style="color: #f59e0b;">{{ pendingCount }}</div>
+        <div class="text-xs" style="color: rgba(255,255,255,0.35);">En attente</div>
+      </div>
+      <div class="rounded-2xl p-6" style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);">
+        <div class="text-3xl font-black mb-1" style="color: #3B82F6;">{{ estimatedCount }}</div>
+        <div class="text-xs" style="color: rgba(255,255,255,0.35);">Estimés</div>
+      </div>
+      <div class="rounded-2xl p-6" style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);">
+        <div class="text-3xl font-black mb-1" style="color: #D4AF37;">{{ offerCount }}</div>
+        <div class="text-xs" style="color: rgba(255,255,255,0.35);">Offres envoyées</div>
+      </div>
+      <div class="rounded-2xl p-6" style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);">
+        <div class="text-3xl font-black mb-1" style="color: #22c55e;">{{ acceptedCount }}</div>
+        <div class="text-xs" style="color: rgba(255,255,255,0.35);">Acceptées</div>
+      </div>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="error" class="px-4 py-3 rounded-xl mb-6 text-sm"
+         style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #ef4444;">
+      ⚠ {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-20">
+      <div class="inline-block w-8 h-8 rounded-full border-2 animate-spin mb-4"
+           style="border-color: #D4AF37; border-top-color: transparent;"></div>
+      <p style="color: rgba(255,255,255,0.3);">Chargement...</p>
+    </div>
+
+    <!-- Layout principal -->
+    <div class="flex gap-6" *ngIf="!loading">
+
+      <!-- Liste des demandes -->
+      <div [class]="selectedRequest ? 'w-1/2' : 'w-full'" class="space-y-4 transition-all">
+
+        <div *ngIf="requests.length === 0" class="text-center py-20">
+          <p style="color: rgba(255,255,255,0.3);">Aucune demande pour l'instant.</p>
+        </div>
+
+        <div *ngFor="let req of requests"
+             (click)="selectRequest(req)"
+             class="rounded-2xl p-6 cursor-pointer transition-all"
+             [style]="selectedRequest?.id === req.id
+            ? 'background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.4);'
+            : 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);'">
+
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base"
+                   style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">🚘</div>
+              <div>
+                <h3 class="font-bold text-sm">{{ req.brand.name }} {{ req.carModel.name }}</h3>
+                <p class="text-xs" style="color: rgba(255,255,255,0.3);">{{ req.year }} · {{ req.mileage | number }} km</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full"
+                  [style]="'background: ' + getStatusColor(req.status) + '20; color: ' + getStatusColor(req.status) + '; border: 1px solid ' + getStatusColor(req.status) + '40;'">
+              {{ getStatusLabel(req.status) }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2.5 py-1 rounded-full" style="background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4);">
+                {{ req.intention === 'SELL' ? '💰 Vente' : '🔍 Estimation' }}
+              </span>
+              <span class="text-xs px-2.5 py-1 rounded-full" style="background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4);">
+                {{ getFuelLabel(req.fuelType) }}
+              </span>
+            </div>
+            <span class="text-xs" style="color: rgba(255,255,255,0.25);">{{ formatDate(req.createdAt) }}</span>
+          </div>
+
+          <!-- Vendeur -->
+          <div class="mt-3 pt-3 flex items-center gap-2" style="border-top: 1px solid rgba(255,255,255,0.05);">
+            <span class="text-xs" style="color: rgba(255,255,255,0.25);">👤</span>
+            <span class="text-xs" style="color: rgba(255,255,255,0.4);">{{ req.user.firstName }} {{ req.user.lastName }} · {{ req.user.email }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel détail -->
+      <div *ngIf="selectedRequest" class="w-1/2 sticky top-28 self-start">
+        <div class="rounded-2xl overflow-hidden" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.2);">
+
+          <!-- Header panel -->
+          <div class="px-6 py-5 flex items-center justify-between" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <h2 class="font-bold text-base">{{ selectedRequest.brand.name }} {{ selectedRequest.carModel.name }}</h2>
+            <button (click)="closePanel()" class="text-xl" style="color: rgba(255,255,255,0.3);">✕</button>
+          </div>
+
+          <div class="px-6 py-6 space-y-6">
+
+            <!-- Infos véhicule -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Année</p>
+                <p class="font-bold text-sm">{{ selectedRequest.year }}</p>
+              </div>
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Kilométrage</p>
+                <p class="font-bold text-sm">{{ selectedRequest.mileage | number }} km</p>
+              </div>
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Carburant</p>
+                <p class="font-bold text-sm">{{ getFuelLabel(selectedRequest.fuelType) }}</p>
+              </div>
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Transmission</p>
+                <p class="font-bold text-sm">{{ selectedRequest.transmission === 'MANUAL' ? 'Manuelle' : 'Automatique' }}</p>
+              </div>
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">État</p>
+                <p class="font-bold text-sm">{{ selectedRequest.condition }}</p>
+              </div>
+              <div>
+                <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Objectif</p>
+                <p class="font-bold text-sm">{{ selectedRequest.intention === 'SELL' ? 'Vendre' : 'Estimer' }}</p>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div *ngIf="selectedRequest.description" class="p-4 rounded-xl" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+              <p class="text-xs mb-2" style="color: rgba(255,255,255,0.3);">Description</p>
+              <p class="text-sm" style="color: rgba(255,255,255,0.6);">{{ selectedRequest.description }}</p>
+            </div>
+
+            <!-- Infos contact -->
+            <div class="p-4 rounded-xl" style="background: rgba(212,175,55,0.04); border: 1px solid rgba(212,175,55,0.1);">
+              <p class="text-xs font-bold mb-3" style="color: #D4AF37; letter-spacing: 2px; text-transform: uppercase;">Contact</p>
+              <div class="space-y-2">
+                <p class="text-sm">👤 {{ selectedRequest.user.firstName }} {{ selectedRequest.user.lastName }}</p>
+                <p class="text-sm" style="color: rgba(255,255,255,0.5);">✉ {{ selectedRequest.user.email }}</p>
+                <p class="text-sm" *ngIf="selectedRequest.user.phone" style="color: rgba(255,255,255,0.5);">📞 {{ selectedRequest.user.phone }}</p>
+                <p class="text-sm" *ngIf="selectedRequest.user.city" style="color: rgba(255,255,255,0.5);">📍 {{ selectedRequest.user.city }}</p>
+              </div>
+            </div>
+
+            <!-- Formulaire estimation / offre -->
+            <div *ngIf="selectedRequest.status !== 'ACCEPTEE' && selectedRequest.status !== 'REFUSEE'"
+                 class="p-5 rounded-xl space-y-4"
+                 style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);">
+              <p class="text-xs font-bold" style="color: #D4AF37; letter-spacing: 2px; text-transform: uppercase;">Faire une estimation</p>
+
+              <div>
+                <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">
+                  Prix estimé (€) *
+                </label>
+                <input type="number" [(ngModel)]="estimatedPrice" placeholder="ex: 12000"
+                       class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                       style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                       onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                       onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+                />
+              </div>
+
+              <div *ngIf="selectedRequest.intention === 'SELL'">
+                <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">
+                  Offre d'achat (€) — optionnel
+                </label>
+                <input type="number" [(ngModel)]="offerPrice" placeholder="ex: 10500"
+                       class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                       style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                       onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                       onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+                />
+                <p class="text-xs mt-1" style="color: rgba(255,255,255,0.25);">Remplissez ce champ pour envoyer une offre d'achat au client</p>
+              </div>
+
+              <button (click)="submitOffer()" [disabled]="!estimatedPrice || submitting"
+                      class="w-full font-black py-3 rounded-xl transition"
+                      style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;"
+                      [style.opacity]="!estimatedPrice || submitting ? '0.4' : '1'">
+                {{ submitting ? 'Envoi...' : 'Envoyer au client' }}
+              </button>
+            </div>
+
+            <!-- Statut final -->
+            <div *ngIf="selectedRequest.status === 'ACCEPTEE'" class="p-4 rounded-xl text-center"
+                 style="background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2);">
+              <p class="font-bold text-sm" style="color: #22c55e;">✓ Offre acceptée par le client</p>
+              <p class="text-xs mt-1" style="color: rgba(255,255,255,0.3);">Prix : {{ formatPrice(selectedRequest.offerPrice!) }}</p>
+            </div>
+
+            <div *ngIf="selectedRequest.status === 'REFUSEE'" class="p-4 rounded-xl text-center"
+                 style="background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2);">
+              <p class="font-bold text-sm" style="color: #ef4444;">✕ Offre refusée par le client</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
