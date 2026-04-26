@@ -22,5 +22,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/home/home').then(m => m.HomeComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'estimation',
+    loadComponent: () =>
+      import('./pages/estimation/estimation').then(m => m.EstimationComponent),
+    canActivate: [authGuard]
   }
 ];

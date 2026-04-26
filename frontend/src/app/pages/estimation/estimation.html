@@ -1,0 +1,248 @@
+<div class="min-h-screen text-white" style="background: #080808;">
+
+  <div class="fixed inset-0 pointer-events-none" style="z-index: 0;">
+    <img
+      src="https://images.unsplash.com/photo-1567818735868-e71b99932e29?auto=format&fit=crop&w=1920&q=80"
+      alt=""
+      style="width:100%; height:100%; object-fit:cover; opacity:0.18; filter: grayscale(10%);"
+    />
+    <div style="position:absolute; inset:0; background: linear-gradient(135deg, rgba(8,8,8,0.95) 0%, rgba(8,8,8,0.80) 50%, rgba(8,8,8,0.95) 100%);"></div>
+    <div style="position:absolute; inset:0; background: radial-gradient(ellipse 50% 50% at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 60%);"></div>
+  </div>
+
+  <nav class="fixed top-0 left-0 right-0 z-50" style="background: rgba(8,8,8,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212,175,55,0.1);">
+    <div class="max-w-4xl mx-auto px-8 py-5 flex items-center justify-between">
+      <a routerLink="/home" class="text-xl font-black">
+        Dalas<span style="color: #D4AF37;">Cars</span>
+      </a>
+      <a routerLink="/home" class="text-sm font-medium transition" style="color: rgba(255,255,255,0.35);">← Retour</a>
+    </div>
+  </nav>
+
+  <div *ngIf="success" class="min-h-screen flex items-center justify-center px-6" style="position: relative; z-index: 1;">
+    <div class="text-center max-w-md">
+      <div class="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-8"
+           style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3);">✓</div>
+      <div class="mb-3 text-xs font-bold tracking-widest uppercase" style="color: #D4AF37; letter-spacing: 3px;">Demande envoyée</div>
+      <h2 class="text-4xl font-black mb-4" style="letter-spacing: -1.5px;">Votre dossier est<br/>entre de bonnes mains.</h2>
+      <p class="mb-10 text-base leading-relaxed" style="color: rgba(255,255,255,0.35);">
+        Notre expert va analyser votre véhicule et vous contactera avec une estimation précise en moins de <strong style="color: #D4AF37;">2 heures</strong>.
+      </p>
+      <a routerLink="/home"
+         class="inline-block font-black px-10 py-4 rounded-xl transition"
+         style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808; box-shadow: 0 10px 40px rgba(212,175,55,0.2);">
+        Retour à l'accueil
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="!success" class="max-w-2xl mx-auto px-8 pt-36 pb-20" style="position: relative; z-index: 1;">
+
+    <div class="mb-12">
+      <div class="mb-4 text-xs font-bold tracking-widest uppercase" style="color: #D4AF37; letter-spacing: 3px;">— Estimation gratuite</div>
+      <h1 class="font-black mb-3" style="font-size: 44px; letter-spacing: -2px;">Estimez votre véhicule</h1>
+      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Notre expert vous répond en moins de 2 heures.</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="flex items-center gap-3 mb-12">
+      <ng-container *ngFor="let step of [1,2,3]; let i = index">
+        <div class="flex items-center gap-3 flex-1">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+               [style]="currentStep >= step
+              ? 'background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;'
+              : 'background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.08);'">
+            {{ step }}
+          </div>
+          <div *ngIf="i < 2" class="flex-1 h-px transition-all"
+               [style]="currentStep > step ? 'background: #D4AF37;' : 'background: rgba(255,255,255,0.06);'">
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div *ngIf="error" class="px-4 py-3 rounded-xl mb-6 text-sm"
+         style="background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2); color: #D4AF37;">
+      ⚠ {{ error }}
+    </div>
+
+    <!-- STEP 1 -->
+    <div *ngIf="currentStep === 1" class="space-y-6">
+      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Informations du véhicule</h2>
+
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Marque</label>
+        <select [(ngModel)]="selectedBrandId" name="brand" (change)="onBrandChange()"
+                class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);">
+          <option [ngValue]="null" style="background: #111;">Sélectionnez une marque</option>
+          <option *ngFor="let brand of brands" [ngValue]="brand.id" style="background: #111;">{{ brand.name }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Modèle</label>
+        <select [(ngModel)]="selectedModelId" name="model" [disabled]="!selectedBrandId"
+                class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                [style.opacity]="!selectedBrandId ? '0.4' : '1'">
+          <option [ngValue]="null" style="background: #111;">Sélectionnez un modèle</option>
+          <option *ngFor="let model of models" [ngValue]="model.id" style="background: #111;">{{ model.name }}</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Année</label>
+          <input type="number" [(ngModel)]="year" name="year" placeholder="2020" min="1990" max="2026"
+                 class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                 onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                 onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+          />
+        </div>
+        <div>
+          <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Kilométrage</label>
+          <input type="number" [(ngModel)]="mileage" name="mileage" placeholder="50000" min="0"
+                 class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                 onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                 onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+          />
+        </div>
+      </div>
+
+      <button (click)="nextStep()" [disabled]="!isStep1Valid()"
+              class="w-full font-black py-3.5 rounded-xl transition"
+              style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;"
+              [style.opacity]="!isStep1Valid() ? '0.4' : '1'">
+        Continuer →
+      </button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div *ngIf="currentStep === 2" class="space-y-8">
+      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Caractéristiques</h2>
+
+      <div>
+        <label class="block mb-4" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Carburant</label>
+        <div class="grid grid-cols-2 gap-3">
+          <button *ngFor="let fuel of ['GASOLINE', 'DIESEL', 'ELECTRIC', 'HYBRID']"
+                  (click)="fuelType = fuel"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-left"
+                  [style]="fuelType === fuel
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            {{ fuel === 'GASOLINE' ? '⛽ Essence' : fuel === 'DIESEL' ? '🛢️ Diesel' : fuel === 'ELECTRIC' ? '⚡ Électrique' : '🔋 Hybride' }}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-4" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Transmission</label>
+        <div class="grid grid-cols-2 gap-3">
+          <button *ngFor="let t of ['MANUAL', 'AUTOMATIC']"
+                  (click)="transmission = t"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-left"
+                  [style]="transmission === t
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            {{ t === 'MANUAL' ? '🔧 Manuelle' : '🤖 Automatique' }}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-4" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">État général</label>
+        <div class="grid grid-cols-2 gap-3">
+          <button *ngFor="let c of ['EXCELLENT', 'BON', 'CORRECT', 'MAUVAIS']"
+                  (click)="condition = c"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-left"
+                  [style]="condition === c
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            {{ c === 'EXCELLENT' ? '⭐ Excellent' : c === 'BON' ? '👍 Bon' : c === 'CORRECT' ? '👌 Correct' : '⚠️ Mauvais' }}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Description (optionnel)</label>
+        <textarea [(ngModel)]="description" name="description" rows="3"
+                  placeholder="Ajoutez des détails utiles sur votre véhicule..."
+                  class="w-full rounded-xl px-4 py-3 text-white focus:outline-none resize-none"
+                  style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                  onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                  onblur="this.style.borderColor='rgba(212,175,55,0.15)'">
+        </textarea>
+      </div>
+
+      <div class="flex gap-3">
+        <button (click)="prevStep()"
+                class="flex-1 font-bold py-3.5 rounded-xl transition"
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
+          ← Retour
+        </button>
+        <button (click)="nextStep()" [disabled]="!isStep2Valid()"
+                class="flex-1 font-black py-3.5 rounded-xl transition"
+                style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;"
+                [style.opacity]="!isStep2Valid() ? '0.4' : '1'">
+          Continuer →
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div *ngIf="currentStep === 3" class="space-y-6">
+      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Votre objectif</h2>
+      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Que souhaitez-vous faire avec votre véhicule ?</p>
+
+      <div class="space-y-4">
+        <button (click)="intention = 'ESTIMATION_ONLY'"
+                class="w-full rounded-2xl p-6 text-left transition"
+                [style]="intention === 'ESTIMATION_ONLY'
+            ? 'background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.4);'
+            : 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);'">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                 style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">🔍</div>
+            <div>
+              <h3 class="font-bold text-base mb-1">Juste estimer mon véhicule</h3>
+              <p class="text-sm" style="color: rgba(255,255,255,0.35);">Je veux connaître la valeur de ma voiture, sans obligation de vente.</p>
+            </div>
+          </div>
+        </button>
+
+        <button (click)="intention = 'SELL'"
+                class="w-full rounded-2xl p-6 text-left transition"
+                [style]="intention === 'SELL'
+            ? 'background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.4);'
+            : 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);'">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                 style="background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">💰</div>
+            <div>
+              <h3 class="font-bold text-base mb-1">Estimer ET vendre mon véhicule</h3>
+              <p class="text-sm" style="color: rgba(255,255,255,0.35);">Je veux une estimation et je suis intéressé par une offre d'achat de DalasCars.</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button (click)="prevStep()"
+                class="flex-1 font-bold py-3.5 rounded-xl transition"
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
+          ← Retour
+        </button>
+        <button (click)="onSubmit()" [disabled]="!intention || loading"
+                class="flex-1 font-black py-3.5 rounded-xl transition"
+                style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808; box-shadow: 0 10px 40px rgba(212,175,55,0.2);"
+                [style.opacity]="!intention || loading ? '0.4' : '1'">
+          {{ loading ? 'Envoi...' : 'Envoyer ma demande' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
