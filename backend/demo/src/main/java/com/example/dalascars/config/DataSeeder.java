@@ -20,18 +20,18 @@ public class DataSeeder implements CommandLineRunner {
 
     private final BrandRepository brandRepository;
     private final CarModelRepository carModelRepository;
-    // Admin user
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
+
         // Admin
-        if (userRepository.findByEmail("admin@dalascars.be").isEmpty()) {
+        if (userRepository.findByEmail("zcontrol@outlook.fr").isEmpty()) {
             User admin = User.builder()
                     .firstName("Dalas")
                     .lastName("Admin")
-                    .email("admin@dalascars.be")
+                    .email("zcontrol@outlook.fr")
                     .password(passwordEncoder.encode("amir"))
                     .role(Role.ADMIN)
                     .enabled(true)
@@ -39,6 +39,7 @@ public class DataSeeder implements CommandLineRunner {
             userRepository.save(admin);
             System.out.println("✅ Seeder — Admin créé !");
         }
+
         if (brandRepository.count() > 0) return;
 
         // BMW
@@ -123,5 +124,4 @@ public class DataSeeder implements CommandLineRunner {
 
         System.out.println("✅ Seeder — Marques et modèles insérés !");
     }
-
 }

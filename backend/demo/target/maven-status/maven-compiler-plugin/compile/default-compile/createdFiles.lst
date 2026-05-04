@@ -3,6 +3,7 @@ com\example\dalascars\dto\AuthResponse$AuthResponseBuilder.class
 com\example\dalascars\repository\CarModelRepository.class
 com\example\dalascars\dto\EstimationRequestDTO.class
 com\example\dalascars\config\DataSeeder.class
+com\example\dalascars\entity\TechnicalControl.class
 com\example\dalascars\entity\EstimationRequest.class
 com\example\dalascars\repository\BrandRepository.class
 com\example\dalascars\entity\Intention.class

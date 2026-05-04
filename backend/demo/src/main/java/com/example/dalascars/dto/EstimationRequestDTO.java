@@ -1,9 +1,8 @@
 package com.example.dalascars.dto;
 
-import com.example.dalascars.entity.CarCondition;
-import com.example.dalascars.entity.FuelType;
-import com.example.dalascars.entity.Intention;
-import com.example.dalascars.entity.Transmission;
+import com.example.dalascars.entity.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -14,11 +13,22 @@ import lombok.*;
 @Builder
 public class EstimationRequestDTO {
 
-    @NotNull
-    private Long brandId;
+    // Contact (si pas connecté)
+    private String contactFirstName;
+    private String contactLastName;
 
-    @NotNull
+    @Email
+    private String contactEmail;
+
+    private String contactPhone;
+
+    // Marque — soit ID soit texte libre
+    private Long brandId;
+    private String customBrand;
+
+    // Modèle — soit ID soit texte libre
     private Long carModelId;
+    private String customModel;
 
     @NotNull
     private int year;
@@ -34,6 +44,12 @@ public class EstimationRequestDTO {
 
     @NotNull
     private CarCondition condition;
+
+    private Integer numberOfDoors;
+
+    private TechnicalControl technicalControl;
+
+    private Boolean belgianVehicle;
 
     private String description;
 

@@ -21,15 +21,16 @@ public class EstimationController {
 
     private final EstimationService estimationService;
 
-    // USER — soumettre une demande
+    // PUBLIC — soumettre une demande (connecté ou anonyme)
     @PostMapping
     public ResponseEntity<EstimationRequest> submit(
             @Valid @RequestBody EstimationRequestDTO dto,
             Principal principal) {
-        return ResponseEntity.ok(estimationService.submit(dto, principal.getName()));
+        String email = principal != null ? principal.getName() : null;
+        return ResponseEntity.ok(estimationService.submit(dto, email));
     }
 
-    // USER — voir ses demandes
+    // USER connecté — voir ses demandes
     @GetMapping("/my")
     public ResponseEntity<List<EstimationRequest>> getMyRequests(Principal principal) {
         return ResponseEntity.ok(estimationService.getMyRequests(principal.getName()));
@@ -39,8 +40,7 @@ public class EstimationController {
     @PatchMapping("/{id}/respond")
     public ResponseEntity<EstimationRequest> respond(
             @PathVariable Long id,
-            @RequestParam boolean accepted,
-            Principal principal) {
+            @RequestParam boolean accepted) {
         return ResponseEntity.ok(estimationService.respondToOffer(id, accepted));
     }
 

@@ -18,26 +18,42 @@ public class EstimationService {
     private final BrandRepository brandRepository;
     private final CarModelRepository carModelRepository;
 
-    // USER — soumettre une demande
+    // USER connecté OU anonyme — soumettre une demande
     public EstimationRequest submit(EstimationRequestDTO dto, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Brand brand = brandRepository.findById(dto.getBrandId())
-                .orElseThrow(() -> new RuntimeException("Brand not found"));
+        User user = null;
+        if (email != null) {
+            user = userRepository.findByEmail(email).orElse(null);
+        }
 
-        CarModel carModel = carModelRepository.findById(dto.getCarModelId())
-                .orElseThrow(() -> new RuntimeException("CarModel not found"));
+        Brand brand = null;
+        if (dto.getBrandId() != null) {
+            brand = brandRepository.findById(dto.getBrandId()).orElse(null);
+        }
+
+        CarModel carModel = null;
+        if (dto.getCarModelId() != null) {
+            carModel = carModelRepository.findById(dto.getCarModelId()).orElse(null);
+        }
 
         EstimationRequest request = EstimationRequest.builder()
                 .user(user)
+                .contactFirstName(dto.getContactFirstName())
+                .contactLastName(dto.getContactLastName())
+                .contactEmail(dto.getContactEmail())
+                .contactPhone(dto.getContactPhone())
                 .brand(brand)
+                .customBrand(dto.getCustomBrand())
                 .carModel(carModel)
+                .customModel(dto.getCustomModel())
                 .year(dto.getYear())
                 .mileage(dto.getMileage())
                 .fuelType(dto.getFuelType())
                 .transmission(dto.getTransmission())
                 .condition(dto.getCondition())
+                .numberOfDoors(dto.getNumberOfDoors())
+                .technicalControl(dto.getTechnicalControl())
+                .belgianVehicle(dto.getBelgianVehicle())
                 .description(dto.getDescription())
                 .intention(dto.getIntention())
                 .build();
@@ -45,7 +61,7 @@ public class EstimationService {
         return estimationRequestRepository.save(request);
     }
 
-    // USER — voir ses demandes
+    // USER connecté — voir ses demandes
     public List<EstimationRequest> getMyRequests(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

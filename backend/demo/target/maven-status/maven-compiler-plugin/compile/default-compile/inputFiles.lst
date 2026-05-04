@@ -19,6 +19,7 @@ D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\FuelType.ja
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\Intention.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\RequestStatus.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\Role.java
+D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\TechnicalControl.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\Transmission.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\entity\User.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\repository\BrandRepository.java
