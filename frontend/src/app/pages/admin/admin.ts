@@ -6,14 +6,23 @@ import { FormsModule } from '@angular/forms';
 
 interface EstimationRequest {
   id: number;
-  user: { id: number; firstName: string; lastName: string; email: string; phone: string; city: string };
-  brand: { id: number; name: string };
-  carModel: { id: number; name: string };
+  user: { id: number; firstName: string; lastName: string; email: string; phone: string; city: string } | null;
+  contactFirstName: string | null;
+  contactLastName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  brand: { id: number; name: string } | null;
+  carModel: { id: number; name: string } | null;
+  customBrand: string | null;
+  customModel: string | null;
   year: number;
   mileage: number;
   fuelType: string;
   transmission: string;
   condition: string;
+  numberOfDoors: number | null;
+  technicalControl: string | null;
+  belgianVehicle: boolean | null;
   description: string;
   intention: string;
   status: string;
@@ -94,6 +103,29 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  getContactName(req: EstimationRequest): string {
+    if (req.user) return req.user.firstName + ' ' + req.user.lastName;
+    return (req.contactFirstName || '') + ' ' + (req.contactLastName || '');
+  }
+
+  getContactEmail(req: EstimationRequest): string {
+    if (req.user) return req.user.email;
+    return req.contactEmail || '';
+  }
+
+  getContactPhone(req: EstimationRequest): string {
+    if (req.user) return req.user.phone || '';
+    return req.contactPhone || '';
+  }
+
+  getBrandName(req: EstimationRequest): string {
+    return req.brand ? req.brand.name : (req.customBrand || '');
+  }
+
+  getModelName(req: EstimationRequest): string {
+    return req.carModel ? req.carModel.name : (req.customModel || '');
+  }
+
   getStatusLabel(status: string): string {
     switch(status) {
       case 'EN_ATTENTE': return 'En attente';
@@ -123,6 +155,15 @@ export class AdminComponent implements OnInit {
       case 'ELECTRIC': return 'Électrique';
       case 'HYBRID': return 'Hybride';
       default: return fuel;
+    }
+  }
+
+  getTechnicalControlLabel(tc: string | null): string {
+    switch(tc) {
+      case 'VALIDE': return '✅ Valide';
+      case 'EXPIRE': return '❌ Expiré';
+      case 'A_PASSER': return '⏳ À passer';
+      default: return '—';
     }
   }
 

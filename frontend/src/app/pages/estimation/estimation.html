@@ -19,6 +19,7 @@
     </div>
   </nav>
 
+  <!-- SUCCESS -->
   <div *ngIf="success" class="min-h-screen flex items-center justify-center px-6" style="position: relative; z-index: 1;">
     <div class="text-center max-w-md">
       <div class="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-8"
@@ -30,23 +31,24 @@
       </p>
       <a routerLink="/home"
          class="inline-block font-black px-10 py-4 rounded-xl transition"
-         style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808; box-shadow: 0 10px 40px rgba(212,175,55,0.2);">
+         style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;">
         Retour à l'accueil
       </a>
     </div>
   </div>
 
+  <!-- FORMULAIRE -->
   <div *ngIf="!success" class="max-w-2xl mx-auto px-8 pt-36 pb-20" style="position: relative; z-index: 1;">
 
     <div class="mb-12">
       <div class="mb-4 text-xs font-bold tracking-widest uppercase" style="color: #D4AF37; letter-spacing: 3px;">— Estimation gratuite</div>
       <h1 class="font-black mb-3" style="font-size: 44px; letter-spacing: -2px;">Estimez votre véhicule</h1>
-      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Notre expert vous répond en moins de 2 heures.</p>
+      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Notre expert vous répond en moins de 2 heures. Aucune inscription requise.</p>
     </div>
 
     <!-- Progress -->
     <div class="flex items-center gap-3 mb-12">
-      <ng-container *ngFor="let step of [1,2,3]; let i = index">
+      <ng-container *ngFor="let step of [1,2,3,4]; let i = index">
         <div class="flex items-center gap-3 flex-1">
           <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                [style]="currentStep >= step
@@ -54,7 +56,7 @@
               : 'background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.08);'">
             {{ step }}
           </div>
-          <div *ngIf="i < 2" class="flex-1 h-px transition-all"
+          <div *ngIf="i < 3" class="flex-1 h-px transition-all"
                [style]="currentStep > step ? 'background: #D4AF37;' : 'background: rgba(255,255,255,0.06);'">
           </div>
         </div>
@@ -70,6 +72,7 @@
     <div *ngIf="currentStep === 1" class="space-y-6">
       <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Informations du véhicule</h2>
 
+      <!-- Marque -->
       <div>
         <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Marque</label>
         <select [(ngModel)]="selectedBrandId" name="brand" (change)="onBrandChange()"
@@ -77,24 +80,43 @@
                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);">
           <option [ngValue]="null" style="background: #111;">Sélectionnez une marque</option>
           <option *ngFor="let brand of brands" [ngValue]="brand.id" style="background: #111;">{{ brand.name }}</option>
+          <option [ngValue]="-1" style="background: #111;">✏️ Autre — saisie manuelle</option>
         </select>
+        <input *ngIf="selectedBrandId === -1" type="text" [(ngModel)]="customBrand"
+               placeholder="Saisissez votre marque..."
+               class="w-full rounded-xl px-4 py-3 text-white focus:outline-none mt-3"
+               style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.3);"
+               onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+               onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+        />
       </div>
 
+      <!-- Modèle -->
       <div>
         <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Modèle</label>
-        <select [(ngModel)]="selectedModelId" name="model" [disabled]="!selectedBrandId"
+        <select [(ngModel)]="selectedModelId" name="model"
+                [disabled]="!selectedBrandId"
                 class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
                 [style.opacity]="!selectedBrandId ? '0.4' : '1'">
           <option [ngValue]="null" style="background: #111;">Sélectionnez un modèle</option>
           <option *ngFor="let model of models" [ngValue]="model.id" style="background: #111;">{{ model.name }}</option>
+          <option [ngValue]="-1" style="background: #111;">✏️ Autre — saisie manuelle</option>
         </select>
+        <input *ngIf="selectedModelId === -1" type="text" [(ngModel)]="customModel"
+               placeholder="Saisissez votre modèle..."
+               class="w-full rounded-xl px-4 py-3 text-white focus:outline-none mt-3"
+               style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.3);"
+               onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+               onblur="this.style.borderColor='rgba(212,175,55,0.3)'"
+        />
       </div>
 
+      <!-- Année + KM -->
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Année</label>
-          <input type="number" [(ngModel)]="year" name="year" placeholder="2020" min="1990" max="2026"
+          <input type="number" [(ngModel)]="year" placeholder="2020" min="1990" max="2026"
                  class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
                  style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
                  onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
@@ -103,12 +125,48 @@
         </div>
         <div>
           <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Kilométrage</label>
-          <input type="number" [(ngModel)]="mileage" name="mileage" placeholder="50000" min="0"
+          <input type="number" [(ngModel)]="mileage" placeholder="50000" min="0"
                  class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
                  style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
                  onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
                  onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
           />
+        </div>
+      </div>
+
+      <!-- Nombre de portes -->
+      <div>
+        <label class="block mb-3" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Nombre de portes</label>
+        <div class="flex gap-3">
+          <button *ngFor="let d of [2, 3, 4, 5]"
+                  (click)="numberOfDoors = d"
+                  class="flex-1 py-3 rounded-xl text-sm font-bold transition"
+                  [style]="numberOfDoors === d
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            {{ d }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Origine -->
+      <div>
+        <label class="block mb-3" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Origine du véhicule</label>
+        <div class="grid grid-cols-2 gap-3">
+          <button (click)="belgianVehicle = true"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-left"
+                  [style]="belgianVehicle === true
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            🇧🇪 Véhicule belge
+          </button>
+          <button (click)="belgianVehicle = false"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-left"
+                  [style]="belgianVehicle === false
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            🌍 Véhicule étranger
+          </button>
         </div>
       </div>
 
@@ -122,7 +180,7 @@
 
     <!-- STEP 2 -->
     <div *ngIf="currentStep === 2" class="space-y-8">
-      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Caractéristiques</h2>
+      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Caractéristiques techniques</h2>
 
       <div>
         <label class="block mb-4" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Carburant</label>
@@ -167,14 +225,17 @@
       </div>
 
       <div>
-        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Description (optionnel)</label>
-        <textarea [(ngModel)]="description" name="description" rows="3"
-                  placeholder="Ajoutez des détails utiles sur votre véhicule..."
-                  class="w-full rounded-xl px-4 py-3 text-white focus:outline-none resize-none"
-                  style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
-                  onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
-                  onblur="this.style.borderColor='rgba(212,175,55,0.15)'">
-        </textarea>
+        <label class="block mb-4" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Contrôle technique</label>
+        <div class="grid grid-cols-3 gap-3">
+          <button *ngFor="let ct of ['VALIDE', 'EXPIRE', 'A_PASSER']"
+                  (click)="technicalControl = ct"
+                  class="rounded-xl px-4 py-3.5 text-sm font-semibold transition text-center"
+                  [style]="technicalControl === ct
+              ? 'background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5); color: #D4AF37;'
+              : 'background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.4);'">
+            {{ ct === 'VALIDE' ? '✅ Valide' : ct === 'EXPIRE' ? '❌ Expiré' : '⏳ À passer' }}
+          </button>
+        </div>
       </div>
 
       <div class="flex gap-3">
@@ -229,16 +290,94 @@
         </button>
       </div>
 
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Description (optionnel)</label>
+        <textarea [(ngModel)]="description" rows="3"
+                  placeholder="Ajoutez des détails utiles sur votre véhicule..."
+                  class="w-full rounded-xl px-4 py-3 text-white focus:outline-none resize-none"
+                  style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                  onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                  onblur="this.style.borderColor='rgba(212,175,55,0.15)'">
+        </textarea>
+      </div>
+
+      <div class="flex gap-3">
+        <button (click)="prevStep()"
+                class="flex-1 font-bold py-3.5 rounded-xl transition"
+                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
+          ← Retour
+        </button>
+        <button (click)="nextStep()" [disabled]="!isStep3Valid()"
+                class="flex-1 font-black py-3.5 rounded-xl transition"
+                style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;"
+                [style.opacity]="!isStep3Valid() ? '0.4' : '1'">
+          Continuer →
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div *ngIf="currentStep === 4" class="space-y-5">
+      <h2 class="text-lg font-bold" style="color: rgba(255,255,255,0.7);">Vos coordonnées</h2>
+      <p class="text-sm" style="color: rgba(255,255,255,0.35);">Pour que notre expert puisse vous contacter avec votre estimation.</p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Prénom</label>
+          <input type="text" [(ngModel)]="contactFirstName" placeholder="John"
+                 class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                 onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                 onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+          />
+        </div>
+        <div>
+          <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Nom</label>
+          <input type="text" [(ngModel)]="contactLastName" placeholder="Doe"
+                 class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+                 onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+                 onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Email</label>
+        <input type="email" [(ngModel)]="contactEmail" placeholder="votre@email.com"
+               class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+               style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+               onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+               onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+        />
+      </div>
+
+      <div>
+        <label class="block mb-2" style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3);">Téléphone</label>
+        <input type="tel" [(ngModel)]="contactPhone" placeholder="0470000000"
+               class="w-full rounded-xl px-4 py-3 text-white focus:outline-none"
+               style="background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.15);"
+               onfocus="this.style.borderColor='rgba(212,175,55,0.5)'"
+               onblur="this.style.borderColor='rgba(212,175,55,0.15)'"
+        />
+      </div>
+
+      <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+        <p class="text-xs" style="color: rgba(255,255,255,0.25); line-height: 1.6;">
+          🔒 Vos données sont confidentielles et ne seront utilisées que pour vous contacter concernant votre estimation. Aucun spam.
+        </p>
+      </div>
+
       <div class="flex gap-3 pt-2">
         <button (click)="prevStep()"
                 class="flex-1 font-bold py-3.5 rounded-xl transition"
                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">
           ← Retour
         </button>
-        <button (click)="onSubmit()" [disabled]="!intention || loading"
+        <button (click)="onSubmit()" [disabled]="!isStep4Valid() || loading"
                 class="flex-1 font-black py-3.5 rounded-xl transition"
                 style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808; box-shadow: 0 10px 40px rgba(212,175,55,0.2);"
-                [style.opacity]="!intention || loading ? '0.4' : '1'">
+                [style.opacity]="!isStep4Valid() || loading ? '0.4' : '1'">
           {{ loading ? 'Envoi...' : 'Envoyer ma demande' }}
         </button>
       </div>

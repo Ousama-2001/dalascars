@@ -23,24 +23,37 @@ interface CarModel {
 })
 export class EstimationComponent implements OnInit {
 
-  // Step management
   currentStep = 1;
-  totalSteps = 3;
+  totalSteps = 4;
 
-  // Data
   brands: Brand[] = [];
   models: CarModel[] = [];
 
-  // Form
+  // Step 1
   selectedBrandId: number | null = null;
+  customBrand = '';
   selectedModelId: number | null = null;
+  customModel = '';
   year: number | null = null;
   mileage: number | null = null;
+  numberOfDoors: number | null = null;
+  belgianVehicle: boolean | null = null;
+
+  // Step 2
   fuelType = '';
   transmission = '';
   condition = '';
-  description = '';
+  technicalControl = '';
+
+  // Step 3
   intention = '';
+  description = '';
+
+  // Step 4
+  contactFirstName = '';
+  contactLastName = '';
+  contactEmail = '';
+  contactPhone = '';
 
   loading = false;
   error = '';
@@ -58,8 +71,9 @@ export class EstimationComponent implements OnInit {
   }
 
   onBrandChange(): void {
-    if (this.selectedBrandId) {
-      this.selectedModelId = null;
+    this.selectedModelId = null;
+    this.models = [];
+    if (this.selectedBrandId && this.selectedBrandId !== -1) {
       this.http.get<CarModel[]>(`${this.API}/car-models/brand/${this.selectedBrandId}`).subscribe({
         next: (models) => this.models = models
       });
@@ -67,24 +81,31 @@ export class EstimationComponent implements OnInit {
   }
 
   nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
-    }
+    if (this.currentStep < this.totalSteps) this.currentStep++;
   }
 
   prevStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
+    if (this.currentStep > 1) this.currentStep--;
   }
 
   isStep1Valid(): boolean {
-    return !!this.selectedBrandId && !!this.selectedModelId &&
-      !!this.year && !!this.mileage;
+    const brandOk = this.selectedBrandId === -1 ? !!this.customBrand : !!this.selectedBrandId;
+    const modelOk = this.selectedModelId === -1 ? !!this.customModel : !!this.selectedModelId;
+    return brandOk && modelOk && !!this.year && !!this.mileage &&
+      !!this.numberOfDoors && this.belgianVehicle !== null;
   }
 
   isStep2Valid(): boolean {
-    return !!this.fuelType && !!this.transmission && !!this.condition;
+    return !!this.fuelType && !!this.transmission && !!this.condition && !!this.technicalControl;
+  }
+
+  isStep3Valid(): boolean {
+    return !!this.intention;
+  }
+
+  isStep4Valid(): boolean {
+    return !!this.contactFirstName && !!this.contactLastName &&
+      !!this.contactEmail && !!this.contactPhone;
   }
 
   onSubmit(): void {
@@ -92,15 +113,24 @@ export class EstimationComponent implements OnInit {
     this.error = '';
 
     const payload = {
-      brandId: this.selectedBrandId,
-      carModelId: this.selectedModelId,
+      brandId: this.selectedBrandId === -1 ? null : this.selectedBrandId,
+      customBrand: this.selectedBrandId === -1 ? this.customBrand : null,
+      carModelId: this.selectedModelId === -1 ? null : this.selectedModelId,
+      customModel: this.selectedModelId === -1 ? this.customModel : null,
       year: this.year,
       mileage: this.mileage,
+      numberOfDoors: this.numberOfDoors,
+      belgianVehicle: this.belgianVehicle,
       fuelType: this.fuelType,
       transmission: this.transmission,
       condition: this.condition,
+      technicalControl: this.technicalControl,
       description: this.description,
-      intention: this.intention
+      intention: this.intention,
+      contactFirstName: this.contactFirstName,
+      contactLastName: this.contactLastName,
+      contactEmail: this.contactEmail,
+      contactPhone: this.contactPhone
     };
 
     this.http.post(`${this.API}/estimations`, payload).subscribe({

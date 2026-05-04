@@ -22,4 +22,19 @@ export class TokenService {
   isLoggedIn(): boolean {
     return !!this.get();
   }
+
+  getRole(): string | null {
+    const token = this.get();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    } catch {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'ROLE_ADMIN';
+  }
 }
