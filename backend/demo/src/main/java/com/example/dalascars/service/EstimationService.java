@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class EstimationService {
     private final UserRepository userRepository;
     private final BrandRepository brandRepository;
     private final CarModelRepository carModelRepository;
+    private final EmailService emailService;
 
     // USER connecté OU anonyme — soumettre une demande
     public EstimationRequest submit(EstimationRequestDTO dto, String email) {
@@ -58,7 +60,12 @@ public class EstimationService {
                 .intention(dto.getIntention())
                 .build();
 
-        return estimationRequestRepository.save(request);
+        EstimationRequest saved = estimationRequestRepository.save(request);
+
+        // Envoi email de confirmation
+        emailService.sendConfirmationEmail(saved);
+
+        return saved;
     }
 
     // USER connecté — voir ses demandes
@@ -66,6 +73,11 @@ public class EstimationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return estimationRequestRepository.findByUserId(user.getId());
+    }
+
+    // SUIVI PAR TOKEN — public
+    public Optional<EstimationRequest> getByToken(String token) {
+        return estimationRequestRepository.findByTrackingToken(token);
     }
 
     // ADMIN — voir toutes les demandes
@@ -87,7 +99,12 @@ public class EstimationService {
             request.setStatus(RequestStatus.ESTIME);
         }
 
-        return estimationRequestRepository.save(request);
+        EstimationRequest saved = estimationRequestRepository.save(request);
+
+        // Envoi email au client
+        emailService.sendEstimationEmail(saved);
+
+        return saved;
     }
 
     // USER — accepter ou refuser une offre

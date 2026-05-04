@@ -27,6 +27,7 @@ D:\dalascars\backend\demo\src\main\java\com\example\dalascars\repository\CarMode
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\repository\EstimationRequestRepository.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\repository\UserRepository.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\service\AuthService.java
+D:\dalascars\backend\demo\src\main\java\com\example\dalascars\service\EmailService.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\service\EstimationService.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\service\JwtService.java
 D:\dalascars\backend\demo\src\main\java\com\example\dalascars\service\UserDetailsServiceImpl.java

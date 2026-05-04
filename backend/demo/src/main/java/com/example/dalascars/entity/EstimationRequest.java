@@ -17,12 +17,10 @@ public class EstimationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // User optionnel (null si pas connecté)
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Infos contact si pas connecté
     @Column
     private String contactFirstName;
 
@@ -35,7 +33,6 @@ public class EstimationRequest {
     @Column
     private String contactPhone;
 
-    // Marque — soit depuis la DB soit saisie manuelle
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
@@ -43,7 +40,6 @@ public class EstimationRequest {
     @Column
     private String customBrand;
 
-    // Modèle — soit depuis la DB soit saisie manuelle
     @ManyToOne
     @JoinColumn(name = "car_model_id")
     private CarModel carModel;
@@ -93,6 +89,9 @@ public class EstimationRequest {
     private Double estimatedPrice;
     private Double offerPrice;
 
+    @Column(unique = true)
+    private String trackingToken;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -100,5 +99,6 @@ public class EstimationRequest {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.status = RequestStatus.EN_ATTENTE;
+        this.trackingToken = java.util.UUID.randomUUID().toString();
     }
 }

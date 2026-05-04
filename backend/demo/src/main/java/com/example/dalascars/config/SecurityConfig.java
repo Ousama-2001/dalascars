@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/brands/**").permitAll()
                         .requestMatchers("/api/car-models/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/estimations").permitAll()
+                        .requestMatchers("/api/estimations/track/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess

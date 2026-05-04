@@ -21,13 +21,21 @@ public class EstimationController {
 
     private final EstimationService estimationService;
 
-    // PUBLIC — soumettre une demande (connecté ou anonyme)
+    // PUBLIC — soumettre une demande
     @PostMapping
     public ResponseEntity<EstimationRequest> submit(
             @Valid @RequestBody EstimationRequestDTO dto,
             Principal principal) {
         String email = principal != null ? principal.getName() : null;
         return ResponseEntity.ok(estimationService.submit(dto, email));
+    }
+
+    // PUBLIC — suivre une demande par token
+    @GetMapping("/track/{token}")
+    public ResponseEntity<EstimationRequest> track(@PathVariable String token) {
+        return estimationService.getByToken(token)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // USER connecté — voir ses demandes

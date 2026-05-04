@@ -15,6 +15,7 @@ com\example\dalascars\dto\LoginRequest.class
 com\example\dalascars\entity\CarModel.class
 com\example\dalascars\entity\Transmission.class
 com\example\dalascars\entity\User$UserBuilder.class
+com\example\dalascars\service\EmailService.class
 com\example\dalascars\entity\User.class
 com\example\dalascars\repository\EstimationRequestRepository.class
 com\example\dalascars\controller\CarModelController.class
