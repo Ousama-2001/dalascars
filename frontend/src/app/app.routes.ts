@@ -40,5 +40,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin/admin').then(m => m.AdminComponent),
     canActivate: [authGuard, adminGuard]
+  },
+
+  {
+    path: 'suivi/:token',
+    loadComponent: () =>
+      import('./pages/suivi/suivi').then(m => m.SuiviComponent),
   }
 ];

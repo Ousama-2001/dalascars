@@ -1,0 +1,160 @@
+<div class="min-h-screen text-white" style="background: #080808;">
+
+  <!-- BG -->
+  <div class="fixed inset-0 pointer-events-none" style="z-index: 0;">
+    <img
+      src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80"
+      alt=""
+      style="width:100%; height:100%; object-fit:cover; opacity:0.08; filter: grayscale(20%);"
+    />
+    <div style="position:absolute; inset:0; background: linear-gradient(135deg, rgba(8,8,8,0.97) 0%, rgba(8,8,8,0.90) 50%, rgba(8,8,8,0.97) 100%);"></div>
+    <div style="position:absolute; inset:0; background: radial-gradient(ellipse 50% 40% at 50% 0%, rgba(212,175,55,0.05) 0%, transparent 60%);"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50" style="background: rgba(8,8,8,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212,175,55,0.1);">
+    <div class="max-w-4xl mx-auto px-8 py-5 flex items-center justify-between">
+      <a routerLink="/" class="text-xl font-black">
+        Dalas<span style="color: #D4AF37;">Cars</span>
+      </a>
+      <a routerLink="/" class="text-sm font-medium" style="color: rgba(255,255,255,0.35);">← Retour à l'accueil</a>
+    </div>
+  </nav>
+
+  <div class="max-w-2xl mx-auto px-8 pt-36 pb-20" style="position: relative; z-index: 1;">
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-20">
+      <div class="inline-block w-8 h-8 rounded-full border-2 animate-spin mb-4"
+           style="border-color: #D4AF37; border-top-color: transparent;"></div>
+      <p style="color: rgba(255,255,255,0.3);">Chargement de votre demande...</p>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="error" class="text-center py-20">
+      <div class="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"
+           style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">❌</div>
+      <h2 class="text-2xl font-black mb-3">Lien invalide</h2>
+      <p class="text-sm mb-8" style="color: rgba(255,255,255,0.35);">{{ error }}</p>
+      <a routerLink="/"
+         class="inline-block font-black px-8 py-3.5 rounded-xl transition"
+         style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;">
+        Retour à l'accueil
+      </a>
+    </div>
+
+    <!-- Contenu -->
+    <div *ngIf="!loading && !error && request">
+
+      <!-- Header -->
+      <div class="mb-10">
+        <div class="mb-4 text-xs font-bold tracking-widest uppercase" style="color: #D4AF37; letter-spacing: 3px;">— Suivi de demande</div>
+        <h1 class="font-black mb-3" style="font-size: 40px; letter-spacing: -2px;">
+          {{ getBrandName() }} {{ getModelName() }}
+        </h1>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-bold px-3 py-1.5 rounded-full"
+                [style]="'background: ' + getStatusColor() + '20; color: ' + getStatusColor() + '; border: 1px solid ' + getStatusColor() + '40;'">
+            {{ getStatusLabel() }}
+          </span>
+          <span class="text-xs" style="color: rgba(255,255,255,0.3);">Demande du {{ formatDate(request.createdAt) }}</span>
+        </div>
+      </div>
+
+      <!-- Infos véhicule -->
+      <div class="rounded-2xl p-6 mb-6" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.1);">
+        <p class="text-xs font-bold mb-4" style="color: #D4AF37; letter-spacing: 2px; text-transform: uppercase;">Votre véhicule</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Année</p>
+            <p class="font-bold text-sm">{{ request.year }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Kilométrage</p>
+            <p class="font-bold text-sm">{{ request.mileage | number }} km</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Carburant</p>
+            <p class="font-bold text-sm">{{ getFuelLabel() }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Transmission</p>
+            <p class="font-bold text-sm">{{ request.transmission === 'MANUAL' ? 'Manuelle' : 'Automatique' }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">État</p>
+            <p class="font-bold text-sm">{{ request.condition }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Portes</p>
+            <p class="font-bold text-sm">{{ request.numberOfDoors || '—' }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Origine</p>
+            <p class="font-bold text-sm">{{ request.belgianVehicle ? '🇧🇪 Belge' : '🌍 Étranger' }}</p>
+          </div>
+          <div>
+            <p class="text-xs mb-1" style="color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Objectif</p>
+            <p class="font-bold text-sm">{{ request.intention === 'SELL' ? '💰 Vendre' : '🔍 Estimer' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- En attente -->
+      <div *ngIf="request.status === 'EN_ATTENTE'" class="rounded-2xl p-8 text-center"
+           style="background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.2);">
+        <div class="text-4xl mb-4">⏳</div>
+        <h3 class="font-black text-xl mb-2" style="color: #f59e0b;">En cours d'analyse</h3>
+        <p class="text-sm" style="color: rgba(255,255,255,0.4);">
+          Notre expert analyse votre véhicule. Vous recevrez votre estimation par email dans moins de 2 heures.
+        </p>
+      </div>
+
+      <!-- Estimation reçue -->
+      <div *ngIf="request.estimatedPrice" class="rounded-2xl p-6 mb-6"
+           style="background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2);">
+        <p class="text-xs font-bold mb-3" style="color: #3B82F6; letter-spacing: 2px; text-transform: uppercase;">Estimation de l'expert</p>
+        <p class="font-black mb-1" style="font-size: 48px; letter-spacing: -2px; color: white;">{{ formatPrice(request.estimatedPrice) }}</p>
+        <p class="text-xs" style="color: rgba(255,255,255,0.3);">Valeur estimée de votre véhicule sur le marché belge</p>
+      </div>
+
+      <!-- Offre d'achat -->
+      <div *ngIf="request.offerPrice && request.status === 'OFFRE_ENVOYEE'" class="rounded-2xl p-6 mb-6"
+           style="background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.3);">
+        <p class="text-xs font-bold mb-3" style="color: #D4AF37; letter-spacing: 2px; text-transform: uppercase;">Offre d'achat DalasCars</p>
+        <p class="font-black mb-1" style="font-size: 48px; letter-spacing: -2px; color: #D4AF37;">{{ formatPrice(request.offerPrice) }}</p>
+        <p class="text-xs mb-6" style="color: rgba(255,255,255,0.3);">Offre ferme de rachat de votre véhicule</p>
+        <p class="text-sm" style="color: rgba(255,255,255,0.5);">
+          Pour accepter ou refuser cette offre, contactez-nous directement à
+          <strong style="color: #D4AF37;">zcontrol@outlook.fr</strong>
+        </p>
+      </div>
+
+      <!-- Acceptée -->
+      <div *ngIf="request.status === 'ACCEPTEE'" class="rounded-2xl p-6 text-center"
+           style="background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2);">
+        <div class="text-4xl mb-4">🎉</div>
+        <h3 class="font-black text-xl mb-2" style="color: #22c55e;">Offre acceptée !</h3>
+        <p class="text-sm" style="color: rgba(255,255,255,0.4);">
+          Notre équipe va vous contacter très prochainement pour finaliser la transaction.
+        </p>
+      </div>
+
+      <!-- Refusée -->
+      <div *ngIf="request.status === 'REFUSEE'" class="rounded-2xl p-6 text-center"
+           style="background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2);">
+        <div class="text-4xl mb-4">😔</div>
+        <h3 class="font-black text-xl mb-2" style="color: #ef4444;">Offre refusée</h3>
+        <p class="text-sm mb-6" style="color: rgba(255,255,255,0.4);">
+          Vous avez refusé notre offre. N'hésitez pas à nous recontacter.
+        </p>
+        <a routerLink="/estimation"
+           class="inline-block font-black px-8 py-3.5 rounded-xl transition"
+           style="background: linear-gradient(135deg, #D4AF37, #B8860B); color: #080808;">
+          Nouvelle estimation
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
